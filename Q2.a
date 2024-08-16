@@ -1,0 +1,90 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+double matrix_multiplication(int** a, int** b, int** result, int N) {
+    struct timespec start1, end1;
+    timespec_get(&start1, TIME_UTC);
+    for (int p = 0; p < N; ++p) {
+        for (int s = 0; s < N; ++s) {
+            result[p][s] = 0;
+            for (int k = 0; k < N; ++k) {
+                result[p][s] += a[p][s] * b[k][s];
+            }
+        }
+    }
+    timespec_get(&end1, TIME_UTC);
+    double elapsed = (end1.tv_sec - start1.tv_sec) + (end1.tv_nsec - start1.tv_nsec) / 1e9;
+    return elapsed;
+}
+
+int main() {
+    struct timespec start, end;
+    timespec_get(&start, TIME_UTC);
+
+    int sizes[] = {64, 128, 256, 512, 1024};
+    double times[5];
+    double mult_times[5];
+
+    for (int i = 0; i < 5; i++) {
+        struct timespec start_time, end_time;
+        timespec_get(&start_time, TIME_UTC);
+        int N = sizes[i];
+
+        // Allocate memory for the matrices
+        int **a = malloc(N * sizeof(int *));
+        int **b = malloc(N * sizeof(int *));
+        int **result = malloc(N * sizeof(int *));
+      
+        int j = 0;
+        while(j < N) {
+            a[j] = malloc(N * sizeof(int));
+            b[j] = malloc(N * sizeof(int));
+            result[j] = malloc(N * sizeof(int));
+            j++;
+        }
+
+        // Initialize matrices with random values
+      int k = 0;
+        while(k < N) {
+          int j = 0;
+            while(j < N) {
+                a[k][j] = rand() % 10;
+                b[k][j] = rand() % 10;
+              j++;
+            }
+          k++;
+        }
+
+        // Measure multiplication time
+        mult_times[i] = matrix_multiplication(a, b, result, N);
+        timespec_get(&end_time, TIME_UTC);
+        times[i] = (end_time.tv_sec - start_time.tv_sec) + (end_time.tv_nsec - start_time.tv_nsec) / 1e9;
+
+        // Free allocated memory
+        j = 0;
+        while(j < N) {
+            free(a[j]);
+            free(b[j]);
+            free(result[j]);
+            j++;
+        }
+        free(a);
+        free(b);
+        free(result);
+    }
+
+    timespec_get(&end, TIME_UTC);
+    double elapsed = (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec) / 1e9;
+
+    printf("Total time taken: %.6f seconds\n", elapsed);
+    printf("Matrix size used | Time for iteration in matrix | Time for matrix multiplication\n");
+    
+    int i = 0;
+    while(i < 5) {
+        printf("%d          | %.6f            | %.6f\n", sizes[i], times[i], mult_times[i]);
+    i++;
+    }
+
+    return 0;
+}
