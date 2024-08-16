@@ -1,0 +1,31 @@
+import numpy as np
+import time
+
+def multiply_int_matrix(N):
+    A = np.random.randint(10, size=(N, N))
+    B = np.random.randint(10, size=(N, N))
+   
+    # Matrix multiplication
+    start = time.time()
+    C = np.dot(A, B)
+    end = time.time()
+    return end - start
+
+def multiply_double_matrix(N):
+    A = np.random.rand(N, N)
+    B = np.random.rand(N, N)
+   
+    # Matrix multiplication
+    start = time.time()
+    C = np.dot(A, B)
+    end = time.time()
+    return end - start
+
+N_values = [64, 128, 256, 512, 1024]
+for N in N_values:
+    print(f"Running for N = {N} (Integer Matrix):")
+    exec_time = multiply_int_matrix(N)
+    print(f"Execution Time: {exec_time:.6f} seconds\n")   
+    print(f"Running for N = {N} (Double Matrix):")
+    exec_time = multiply_double_matrix(N)
+    print(f"Execution Time: {exec_time:.6f} seconds\n")
