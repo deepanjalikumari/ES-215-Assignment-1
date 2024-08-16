@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <time.h>
+//fibonacci of 50 no.
+unsigned long long fib_rec(unsigned long long n) {
+  if (n == 0) 
+    return 0;
+  if (n == 1) 
+    return 1;
+  return fib_rec(n - 1) + fib_rec(n -2);
+}
+//printing fibonacci of no.
+void print_fib_rec(int n) {
+  if (n == 0) {
+    printf("%lld ", fib_rec(n));
+  } else {
+    print_fib_rec(n - 1);
+    printf("%lld ", fib_rec(n));
+  }
+}
+// calculating time taken in recursion
+int main() {
+  struct timespec strt, end;
+  double elap_time;
+  timespec_get(&strt, TIME_UTC);
+  print_fib_rec(49);// as it starts from zero
+  timespec_get(&end, TIME_UTC);
+  elap_time = (end.tv_sec - strt.tv_sec) + (end.tv_nsec -
+  strt.tv_nsec) / 1e9;
+  printf("\ntime taken in recursion: %.9f seconds\n", elap_time);
+  return 0;
+}
